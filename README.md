@@ -1,11 +1,11 @@
-# 🚖 NYC Yellow Taxi - Prédictions des Trajets
+#  NYC Yellow Taxi - Prédictions des Trajets
 
 Bienvenue dans ce projet de prédiction des trajets de taxis jaunes de New York ! Nous utilisons des modèles de Machine Learning pour prédire deux aspects clés des trajets de taxi :
 
 1. **Prédiction du nombre de passagers** : Estimation du nombre de passagers pour un trajet donné
 2. **Prédiction du montant total** : Estimation du coût total du trajet
 
-## 📌 Table des matières
+##  Table des matières
 - [Présentation des modèles](#-présentation-des-modèles)
 - [Architecture](#-architecture)
 - [Prérequis](#-prérequis)
@@ -15,7 +15,7 @@ Bienvenue dans ce projet de prédiction des trajets de taxis jaunes de New York 
 - [Technologies utilisées](#-technologies-utilisées)
 - [Auteurs](#-auteurs)
 
-## 🧠 Présentation des modèles
+##  Présentation des modèles
 
 ### 1. Modèle de prédiction du nombre de passagers
 - **Type** : Random Forest
@@ -29,29 +29,29 @@ Bienvenue dans ce projet de prédiction des trajets de taxis jaunes de New York 
 - **Sortie** : Montant total en dollars (avec 2 décimales)
 - **Précision** : 82%
 
-## 🏗️ Architecture
+##  Architecture
 
 Le projet est structuré en deux composants principaux :
 
-### 🖥️ Backend (API Flask)
+###  Backend (API Flask)
 - Héberge les deux modèles de prédiction
 - Expose des endpoints REST pour les prédictions
 - Gère la validation des entrées et le formatage des sorties
 
-### 🎨 Frontend (Streamlit)
+###  Frontend (Streamlit)
 - Interface utilisateur intuitive
 - Formulaire de saisie des paramètres du trajet
 - Affichage clair des prédictions
 - Visualisation des résultats
 
-## 🔧 Prérequis
+##  Prérequis
 
-- 🐳 Docker 20.10+
-- 🐙 Docker Compose 2.0+
-- 🔗 Git
+-  Docker 20.10+
+-  Docker Compose 2.0+
+-  Git
 - 8 Go de RAM minimum (recommandé pour faire tourner les modèles)
 
-## 📥 Installation
+##  Installation
 
 1. **Cloner le dépôt**
    ```bash
@@ -69,7 +69,7 @@ Le projet est structuré en deux composants principaux :
    docker-compose build
    ```
 
-## 🚀 Utilisation
+##  Utilisation
 
 1. **Démarrer les services**
    ```bash
@@ -85,7 +85,7 @@ Le projet est structuré en deux composants principaux :
    - Cliquez sur "Obtenir les prédictions"
    - Consultez les résultats pour les deux modèles
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### `GET /`
 Page d'accueil de l'API
@@ -111,7 +111,7 @@ Effectue les prédictions pour les deux modèles
 }
 ```
 
-## 🛠️ Technologies utilisées
+##  Technologies utilisées
 
 ### Backend
 - Python 3.9
@@ -127,16 +127,16 @@ Effectue les prédictions pour les deux modèles
 - Docker
 - Docker Compose
 
-## 👥 Auteurs
+##  Auteurs
 
 - **Ines** - Développeuse principale
 - **Ousmane BA** - Développeur principal
 
-## 📜 Licence
+##  Licence
 
 Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
-## 🤝 Contribuer
+##  Contribuer
 
 Les contributions sont les bienvenues ! Pour contribuer :
 
