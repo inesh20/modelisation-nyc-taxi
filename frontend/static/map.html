@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps</title>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .gm-style-iw {
+            padding: 10px;
+        }
+        /* Style personnalisé pour le marqueur */
+        .custom-marker {
+            background-color: #4285F4;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        let map;
+        let marker;
+        let infoWindow;
+
+        function initMap() {
+            console.log("Initialisation de la carte...");
+            // Position par défaut (NYC)
+            const defaultPosition = { lat: 40.7128, lng: -74.0060 };
+            
+            // Création de la carte
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: defaultPosition,
+                mapTypeId: "roadmap",
+                styles: [
+                    {
+                        "featureType": "poi",
+                        "elementType": "labels",
+                        "stylers": [{"visibility": "off"}]
+                    }
+                ]
+            });
+
+            console.log("Carte créée, ajout du marqueur...");
+            
+            // Création de l'infoWindow
+            infoWindow = new google.maps.InfoWindow();
+            
+            // Créer un élément personnalisé pour le marqueur
+            const markerElement = document.createElement("div");
+            markerElement.className = "custom-marker";
+            
+            // Ajout d'un marqueur personnalisé
+            marker = new google.maps.marker.AdvancedMarkerElement({
+                position: defaultPosition,
+                map: map,
+                title: "Point de départ",
+                content: markerElement,
+                gmpDraggable: true
+            });
+
+            // Affichage initial de l'infoWindow
+            updateInfoWindow(defaultPosition);
+            
+            // Mise à jour des coordonnées lors du déplacement du marqueur
+            marker.addListener("dragend", (event) => {
+                console.log("Marqueur déplacé");
+                const position = marker.position;
+                updateCoordinates(position);
+                updateInfoWindow(position);
+            });
+
+            // Mise à jour des coordonnées lors d'un clic sur la carte
+            map.addListener("click", (event) => {
+                console.log("Clic sur la carte");
+                marker.position = event.latLng;
+                updateCoordinates(event.latLng);
+                updateInfoWindow(event.latLng);
+            });
+            
+            console.log("Écouteurs d'événements configurés");
+        }
+
+        // Mettre à jour les coordonnées dans Streamlit
+        function updateCoordinates(position) {
+            console.log("Mise à jour des coordonnées :", position.lat(), position.lng());
+            window.parent.postMessage({
+                type: 'mapClick',
+                lat: position.lat(),
+                lng: position.lng()
+            }, '*');
+        }
+
+        // Mettre à jour l'infoWindow
+        function updateInfoWindow(position) {
+            const content = `
+                <div style="padding: 10px;">
+                    <strong>Position sélectionnée :</strong><br>
+                    Latitude: ${position.lat().toFixed(6)}<br>
+                    Longitude: ${position.lng().toFixed(6)}
+                </div>
+            `;
+            
+            infoWindow.setContent(content);
+            infoWindow.setPosition(position);
+            infoWindow.open(map);
+        }
+
+        // Fonction pour déplacer le marqueur depuis Streamlit
+        window.moveMarker = function(lat, lng) {
+            console.log("Déplacement du marqueur depuis Streamlit :", lat, lng);
+            if (marker) {
+                const newPosition = new google.maps.LatLng(lat, lng);
+                marker.position = newPosition;
+                map.panTo(newPosition);
+                updateInfoWindow(newPosition);
+                return true;
+            }
+            return false;
+        };
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,marker&callback=initMap">
+    </script>
+</body>
+</html>
