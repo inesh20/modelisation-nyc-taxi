@@ -1,0 +1,81 @@
+name: Déploiement sur Google Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '**/*.md'
+      - '**/*.ipynb'
+
+env:
+  PROJECT_ID: trusty-anchor-468422-t9
+  RUN_REGION: europe-west9
+  SERVICE_NAME: nyc-taxi-app
+
+jobs:
+  setup-build-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Authentification Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configuration Google Cloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: trusty-anchor-468422-t9
+
+    - name: Configurer Docker
+      run: |
+        gcloud auth configure-docker europe-west9-docker.pkg.dev
+
+    - name: Build et push du backend
+      working-directory: ./backend
+      run: |
+        docker build -t europe-west9-docker.pkg.dev/trusty-anchor-468422-t9/docker-repo/nyc-taxi-backend:$GITHUB_SHA .
+        docker push europe-west9-docker.pkg.dev/trusty-anchor-468422-t9/docker-repo/nyc-taxi-backend:$GITHUB_SHA
+
+    - name: 🏗️ Build et push du frontend
+      working-directory: ./frontend
+      env:
+        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+      run: |
+        docker build \
+          --build-arg VUE_APP_GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY \
+          -t europe-west9-docker.pkg.dev/trusty-anchor-468422-t9/docker-repo/nyc-taxi-frontend:$GITHUB_SHA .
+        docker push europe-west9-docker.pkg.dev/trusty-anchor-468422-t9/docker-repo/nyc-taxi-frontend:$GITHUB_SHA
+
+    - name: Déploiement sur Cloud Run
+      run: |
+        # Déploiement du backend avec plus de mémoire
+        gcloud run deploy nyc-taxi-backend \
+          --image europe-west9-docker.pkg.dev/trusty-anchor-468422-t9/docker-repo/nyc-taxi-backend:$GITHUB_SHA \
+          --platform managed \
+          --region ${{ env.RUN_REGION }} \
+          --port 8080 \
+          --memory 2Gi \
+          --cpu 1 \
+          --timeout 600 \
+          --allow-unauthenticated
+
+        # Déploiement du frontend
+        gcloud run deploy nyc-taxi-frontend \
+          --image europe-west9-docker.pkg.dev/trusty-anchor-468422-t9/docker-repo/nyc-taxi-frontend:$GITHUB_SHA \
+          --platform managed \
+          --region ${{ env.RUN_REGION }} \
+          --port 8080 \
+          --memory 1Gi \
+          --cpu 1 \
+          --timeout 600 \
+          --allow-unauthenticated \
+          --set-env-vars="GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" \
+          --set-env-vars="BACKEND_URL=https://nyc-taxi-backend-272133029816.europe-west9.run.app" \
+          --set-env-vars="STREAMLIT_SERVER_PORT=8080" \
+          --set-env-vars="STREAMLIT_SERVER_HEADLESS=true"
