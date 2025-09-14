@@ -21,13 +21,11 @@ Bienvenue dans ce projet de prédiction des trajets de taxis jaunes de New York 
 - **Type** : Random Forest
 - **Entrées** : Heure, jour ouvré, météo, température, catégorie de distance
 - **Sortie** : Nombre de passagers (entier arrondi)
-- **Précision** : 84%
 
 ### 2. Modèle de prédiction du montant total
 - **Type** : Random Forest Regressor
 - **Entrées** : Mêmes entrées que le modèle de passagers
 - **Sortie** : Montant total en dollars (avec 2 décimales)
-- **Précision** : 82%
 
 ##  Architecture
 
