@@ -127,7 +127,7 @@ Effectue les prédictions pour les deux modèles
 
 ##  Auteurs
 
-- **Ines** - Développeuse principale
+- **Ines HAMMOUCH** - Développeuse principale
 - **Ousmane BA** - Développeur principal
 
 ##  Licence
